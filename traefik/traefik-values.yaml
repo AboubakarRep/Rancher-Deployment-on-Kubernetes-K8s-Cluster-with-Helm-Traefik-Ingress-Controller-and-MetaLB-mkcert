@@ -1,3 +1,33 @@
+# # traefik/traefik-values.yaml
+# deployment:
+#   replicas: 1
+
+# providers:
+#   kubernetesIngress:
+#     publishedService:
+#       enabled: true
+
+# ports:
+#   web:
+#     redirectTo: websecure
+#   websecure:
+#     tls:
+#       enabled: true
+
+# ingressRoute:
+#   dashboard:
+#     enabled: true
+
+# service:
+#   type: LoadBalancer
+# #  spec:
+# #    loadBalancerIP: 10.64.13.210
+#   spec: {}
+
+
+
+
+
 # traefik/traefik-values.yaml
 deployment:
   replicas: 1
@@ -13,6 +43,17 @@ ports:
   websecure:
     tls:
       enabled: true
+      # Désactive certResolver car on utilise mkcert
+      # certResolver: myresolver
+
+# DÉSACTIVE Let's Encrypt - on utilise mkcert
+# certificatesResolvers:
+#   myresolver:
+#     acme:
+#       email: ton-email@exemple.com
+#       storage: /data/acme.json
+#       httpChallenge:
+#         entryPoint: web
 
 ingressRoute:
   dashboard:
@@ -20,6 +61,3 @@ ingressRoute:
 
 service:
   type: LoadBalancer
-#  spec:
-#    loadBalancerIP: 10.64.13.210
-  spec: {}

@@ -1,25 +1,28 @@
 # rancher/rancher-values.yaml
-#hostname: rancher.10.64.13.211.nip.io
-
 hostname: rancher.k8s.ci
-
 replicas: 1
 
-image: rancher/rancher
-tag: v2.12.2
-
 ingress:
-  enabled: true
-  ingressClassName: traefik
-  tls:
-    source: secret
+  enabled: false  # Désactive l'ingress Rancher
 
 service:
-  type: LoadBalancer    # <-- C'est ici que tu spécifies que tu veux un LoadBalancer
-# loadBalancerIP: 10.64.13.211  # Si tu veux spécifier une IP fixe pour Rancher
-   
+  type: LoadBalancer
+  # Spécifie l'IP si tu veux la même
+  # loadBalancerIP: 10.64.13.211
+
+# Monte le certificat mkcert dans Rancher
+volumes:
+  - name: ssl-cert
+    secret:
+      secretName: tls-rancher-ingress
+volumeMounts:
+  - name: ssl-cert
+    mountPath: /etc/rancher/ssl
+    readOnly: true
 
 extraEnv:
+  - name: SSL_CERT_DIR
+    value: /etc/rancher/ssl
   - name: CATTLE_PROMETHEUS_METRICS
     value: "true"
 
@@ -30,3 +33,74 @@ resources:
   requests:
     cpu: 500m
     memory: 1024Mi
+
+
+# # # rancher/rancher-values.yaml
+# # #hostname: rancher.10.64.13.211.nip.io
+
+# # hostname: rancher.k8s.ci
+
+# # replicas: 1
+
+# # image: rancher/rancher
+# # tag: v2.12.2
+
+# # ingress:
+# #   enabled: true
+# #   ingressClassName: traefik
+# #   tls:
+# #     source: secret
+
+# # # # Ajoute cette section pour utiliser Let's Encrypt
+# # # letsEncrypt:
+# # #   email: ton-email@exemple.com  # Remplace par ton email
+# # #   environment: production       # ou staging pour les tests
+
+# # service:
+# #   type: LoadBalancer    # <-- C'est ici que tu spécifies que tu veux un LoadBalancer
+# # # loadBalancerIP: 10.64.13.211  # Si tu veux spécifier une IP fixe pour Rancher
+   
+
+# # extraEnv:
+# #   - name: CATTLE_PROMETHEUS_METRICS
+# #     value: "true"
+
+# # resources:
+# #   limits:
+# #     cpu: 1000m
+# #     memory: 1536Mi
+# #   requests:
+# #     cpu: 500m
+# #     memory: 1024Mi
+
+
+
+
+
+
+# # rancher/rancher-values.yaml
+# hostname: rancher.k8s.ci
+# replicas: 1
+
+# ingress:
+#   enabled: false  # IMPORTANT : laisse Traefik gérer
+
+# service:
+#   type: LoadBalancer
+
+# # SUPPRIME Let's Encrypt - on utilise mkcert
+# # letsEncrypt:
+# #   email: ton-email@exemple.com
+# #   environment: production
+
+# extraEnv:
+#   - name: CATTLE_PROMETHEUS_METRICS
+#     value: "true"
+
+# resources:
+#   limits:
+#     cpu: 1000m
+#     memory: 1536Mi
+#   requests:
+#     cpu: 500m
+#     memory: 1024Mi
